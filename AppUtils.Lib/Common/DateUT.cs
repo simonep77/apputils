@@ -12,7 +12,6 @@ namespace AppUtils.Lib.Common
     public class DateUT
     {
 
-        private static CultureInfo _Culture_IT = new CultureInfo("it-IT");
         private static DateTime[] _ArrFestivita = new DateTime[] { 
             new DateTime(1,1,1),
             new DateTime(1,1,6),
@@ -50,7 +49,7 @@ namespace AppUtils.Lib.Common
                 if (string.IsNullOrWhiteSpace(sFormatoIn))
                     sFormatoIn = @"dd/MM/yyyy";
 
-                return DateTime.ParseExact(sDataIn, sFormatoIn, _Culture_IT);
+                return DateTime.ParseExact(sDataIn, sFormatoIn, LibContext.Culture_IT);
             }
             catch (Exception)
             {
@@ -86,7 +85,7 @@ namespace AppUtils.Lib.Common
                 if (string.IsNullOrWhiteSpace(sFormatoIn))
                     sFormatoIn = @"dd/MM/yyyy";
 
-                return DateTime.ParseExact(sDataIn, sFormatoIn, _Culture_IT);
+                return DateTime.ParseExact(sDataIn, sFormatoIn, LibContext.Culture_IT);
 
             }
             catch (Exception)
@@ -184,7 +183,7 @@ namespace AppUtils.Lib.Common
         {
             try
             {
-                return dataIn.ToString("dd MMMM yyyy", _Culture_IT);
+                return dataIn.ToString("dd MMMM yyyy", LibContext.Culture_IT);
             }
             catch (Exception ex)
             {
