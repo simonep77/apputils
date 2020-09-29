@@ -309,43 +309,12 @@ namespace AppUtils.Lib.Arch.FileSystem
             ///  <param name="buffer"></param>
             public override void FileWriteFromBuffer(string vpath, byte[] buffer)
             {
-                if (buffer.Length <= FS.MAX_SINGLE_FILE_SIZE)
+                using (var ms = new MemoryStream(buffer))
                 {
-                    // Invio semplice
-                    this.checkBuffer(buffer);
-                    this.mParams.Add(FS.PARAM_ACTION, FS.ACTION_WRITE);
-                    this.mParams.Add(FS.PARAM_VPATH, vpath);
-                    this.sendRequest(this.mParams, buffer, 0, buffer.Length);
+                    ms.Position = 0;
+                    this.FileWriteFromStream(vpath, ms);
                 }
-                else
-                {
-                    // Se il file e' grande utilizziamo un temporaneo e diverse chiamate append, alla fine spostiamo il file
-                    string sTempName = string.Concat(FS.VPATH_TEMP, "/", Environment.MachineName, "_", Guid.NewGuid().ToString(), Path.GetExtension(vpath));
-                    int iDataLen = buffer.Length;
-                    int iLength = 0;
-                    int iTotWrite = 0;
-                    // Crea temporaneo
-                    this.checkBuffer(buffer);
-                    this.FileTouch(sTempName);
-
-                    while (iDataLen > 0)
-                    {
-                        // Appende blocco al file temporaneo
-                        this.mParams.Add(FS.PARAM_ACTION, FS.ACTION_APPEND);
-                        this.mParams.Add(FS.PARAM_VPATH, sTempName);
-                        iLength = Math.Min(iDataLen, FS.MAX_SINGLE_FILE_SIZE);
-                        this.sendRequest(this.mParams, buffer, iTotWrite, iLength);
-                        iDataLen -= FS.MAX_SINGLE_FILE_SIZE;
-                        iTotWrite += iLength;
-                    }
-
-         
-
-                    // Cancella eventuale file gia' presente
-                    this.FileDelete(vpath);
-                    // Sposta temporaneo su file finale
-                    this.FileMove(sTempName, vpath);
-                }
+                
             }
 
 
@@ -356,20 +325,12 @@ namespace AppUtils.Lib.Arch.FileSystem
             ///  <param name="localFile"></param>
             public override void FileWriteFromDisk(string vpath, string localFile)
             {
-                // Info file
-                FileInfo fInfo = new FileInfo(localFile);
-
-                // Se piccolo utilizza il metodo semplice con buffer
-                if (fInfo.Length <= FS.MAX_SINGLE_FILE_SIZE)
-                    // Invia semplicemente il buffer
-                    this.FileWriteFromBuffer(vpath, File.ReadAllBytes(localFile));
-                else
-                    // Esegue invio a blocchi
-                    using (FileStream oFs = File.OpenRead(localFile))
-                    {
-                        this.FileWriteFromStream(vpath, oFs);
-                    }
-            }
+                // Esegue invio a blocchi
+                using (FileStream oFs = File.OpenRead(localFile))
+                {
+                    this.FileWriteFromStream(vpath, oFs);
+                }
+        }
 
 
             /// <summary>
@@ -383,12 +344,13 @@ namespace AppUtils.Lib.Arch.FileSystem
             {
                 this.checkStream(stream, true, false, true);
                 byte[] buffer;
+
                 if (stream.Length <= FS.MAX_SINGLE_FILE_SIZE)
                 {
                     // Si sposta all'inizio
                     stream.Seek(0, SeekOrigin.Begin);
                     // Legge su buffer
-                    buffer = new byte[stream.Length - 1 + 1];
+                    buffer = new byte[stream.Length];
                     stream.Read(buffer, 0, buffer.Length);
                     // Scrive buffer
                     this.FileWriteFromBuffer(vpath, buffer);

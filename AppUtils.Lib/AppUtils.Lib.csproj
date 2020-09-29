@@ -5,4 +5,8 @@
     <UserSecretsId>d419d2fd-badf-44b1-9933-a5fcc7926791</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Arch\FileSystem\FileSystemLocal.cs" />
+  </ItemGroup>
+
 </Project>
