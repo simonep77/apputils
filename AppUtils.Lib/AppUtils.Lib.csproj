@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <UserSecretsId>d419d2fd-badf-44b1-9933-a5fcc7926791</UserSecretsId>
+    <Copyright>Simone Pelaia</Copyright>
+    <Authors>Simone Pelaia</Authors>
+    <Description>Raccolta di utility varie a supporto delle applicazioni</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
