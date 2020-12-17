@@ -11,6 +11,12 @@ namespace AppUtils.Lib.Response
         public string Id { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
+        public TimeSpan Elaps { 
+            get 
+            {
+                return DateEnd.Subtract(DateStart);
+            } 
+            set { } }
 
         public ResponseExecInfo(){
             this.Id = Guid.NewGuid().ToString();

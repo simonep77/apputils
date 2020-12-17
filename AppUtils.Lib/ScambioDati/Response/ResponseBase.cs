@@ -13,7 +13,7 @@ namespace AppUtils.Lib.Response
         /// <summary>
         ///  Lista messaggi 
         /// </summary>
-        private List<ResponseMsg> Messages { get; set; } = new List<ResponseMsg>();
+        public List<ResponseMsg> Messages { get; set; } = new List<ResponseMsg>();
  
         /// <summary>
         /// Indica se presente almeno un errore
