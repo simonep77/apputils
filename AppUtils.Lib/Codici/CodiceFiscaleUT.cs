@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
-
-
 using System.Text.RegularExpressions;
 
+namespace AppUtils.Lib.Codici
+{
 
     /// <summary>
     /// ref.: <a href="https://www.ryadel.com/classe-asp-net-c-per-verifica-controllo-calcolo-del-codice-fiscale/">https://www.ryadel.com/classe-asp-net-c-per-verifica-controllo-calcolo-del-codice-fiscale/</a>
@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
     /// http://www.agenziaentrate.gov.it/wps/content/Nsilib/Nsi/Home/CosaDeviFare/Richiedere/Codice+fiscale+e+tessera+sanitaria/Richiesta+TS_CF/SchedaI/FAQ+sul+Codice+Fiscale/
     /// </summary>
     public static class CodiceFiscaleUT
-{
+    {
         #region Private Members
         private static readonly string Months = "ABCDEHLMPRST";
         private static readonly string Vocals = "AEIOU";
@@ -101,49 +101,49 @@ using System.Text.RegularExpressions;
         }
 
 
-    /// <summary>
-    ///  Esegue la validazione di un codice fiscale ritornando un oggetto esito
-    ///  </summary>
-    ///  <param name="codFiscIn"></param>
-    ///  <remarks></remarks>
-    public static EsitoControllo Controlla(string codFiscIn)
-    {
-        EsitoControllo oEsito = new EsitoControllo();
-        try
+        /// <summary>
+        ///  Esegue la validazione di un codice fiscale ritornando un oggetto esito
+        ///  </summary>
+        ///  <param name="codFiscIn"></param>
+        ///  <remarks></remarks>
+        public static EsitoControllo Controlla(string codFiscIn)
         {
-            if (!ControlloFormaleOK(codFiscIn))
-                throw new ArgumentException(@"Codice fiscale non valido");
+            EsitoControllo oEsito = new EsitoControllo();
+            try
+            {
+                if (!ControlloFormaleOK(codFiscIn))
+                    throw new ArgumentException(@"Codice fiscale non valido");
+            }
+            catch (Exception ex)
+            {
+                oEsito.Positivo = false;
+                oEsito.EsitoTesto = ex.Message;
+                oEsito.EsitoCodice = 1;
+            }
+
+            return oEsito;
         }
-        catch (Exception ex)
-        {
-            oEsito.Positivo = false;
-            oEsito.EsitoTesto = ex.Message;
-            oEsito.EsitoCodice = 1;
-        }
-
-        return oEsito;
-    }
 
 
-    /// <summary>
-    /// Effettua un "controllo formale" del Codice Fiscale indicato secondo i seguenti criteri:
-    /// 
-    /// - Controlla che non sia un valore nullo/vuoto.
-    /// - Controlla che il codice sia coerente con le specifiche normative per i Codici Fiscali (inclusi possibili casi di omocodia).
-    /// - Controlla che il carattere di controllo sia coerente rispetto al Codice Fiscale indicato.
-    /// - Controlla la corrispondenza tra il codice fiscale e i dati anagrafici indicati.
-    /// 
-    /// IMPORTANTE: Si ricorda che, anche se il Codice Fiscale risulta "formalmente corretto", 
-    /// non ci sono garanzie che si tratti di un Codice Fiscale relativo a una persona realmente esistente o esistita.
-    /// </summary>
-    /// <param name="cf">il codice fiscale da controllare</param>
-    /// <param name="nome">Nome</param>
-    /// <param name="cognome">Cognome</param>
-    /// <param name="dataDiNascita">Data di nascita</param>
-    /// <param name="genere">Genere ('M' o 'F')</param>
-    /// <param name="codiceISTAT">Codice ISTAT (1 lettera e 3 numeri. Es.: H501 per Roma)</param>
-    /// <returns>TRUE se il codice è formalmente corretto, FALSE in caso contrario</returns>
-    public static bool ControlloFormaleOK(string cf, string nome, string cognome, DateTime dataDiNascita, char genere, string codiceISTAT)
+        /// <summary>
+        /// Effettua un "controllo formale" del Codice Fiscale indicato secondo i seguenti criteri:
+        /// 
+        /// - Controlla che non sia un valore nullo/vuoto.
+        /// - Controlla che il codice sia coerente con le specifiche normative per i Codici Fiscali (inclusi possibili casi di omocodia).
+        /// - Controlla che il carattere di controllo sia coerente rispetto al Codice Fiscale indicato.
+        /// - Controlla la corrispondenza tra il codice fiscale e i dati anagrafici indicati.
+        /// 
+        /// IMPORTANTE: Si ricorda che, anche se il Codice Fiscale risulta "formalmente corretto", 
+        /// non ci sono garanzie che si tratti di un Codice Fiscale relativo a una persona realmente esistente o esistita.
+        /// </summary>
+        /// <param name="cf">il codice fiscale da controllare</param>
+        /// <param name="nome">Nome</param>
+        /// <param name="cognome">Cognome</param>
+        /// <param name="dataDiNascita">Data di nascita</param>
+        /// <param name="genere">Genere ('M' o 'F')</param>
+        /// <param name="codiceISTAT">Codice ISTAT (1 lettera e 3 numeri. Es.: H501 per Roma)</param>
+        /// <returns>TRUE se il codice è formalmente corretto, FALSE in caso contrario</returns>
+        public static bool ControlloFormaleOK(string cf, string nome, string cognome, DateTime dataDiNascita, char genere, string codiceISTAT)
         {
             if (String.IsNullOrEmpty(cf) || cf.Length < 16) return false;
             cf = Normalize(cf, false);
@@ -325,4 +325,4 @@ using System.Text.RegularExpressions;
         #endregion Private Methods
     }
 
-
+}
