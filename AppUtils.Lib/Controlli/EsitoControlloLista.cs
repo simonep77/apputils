@@ -1,35 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
-
-/// <summary>
-/// Elenco esiti controlli
-/// </summary>
-public class EsitoControlloLista : List<EsitoControllo>
+namespace AppUtils.Lib.Controlli
 {
-    public bool Positivo
+
+
+    /// <summary>
+    /// Elenco esiti controlli
+    /// </summary>
+    public class EsitoControlloLista : List<EsitoControllo>
     {
-        get
+        public bool Positivo
         {
-            foreach (EsitoControllo Item in this)
+            get
             {
-                if (!Item.Positivo)
-                    return false;
+                foreach (EsitoControllo Item in this)
+                {
+                    if (!Item.Positivo)
+                        return false;
+                }
+
+                return true;
             }
-
-            return true;
         }
+
+        public void Add(bool positivo, int codice, string testo)
+        {
+            EsitoControllo oCtrl = new EsitoControllo();
+            oCtrl.Positivo = positivo;
+            oCtrl.EsitoCodice = codice;
+            oCtrl.EsitoTesto = testo;
+
+            this.Add(oCtrl);
+        }
+
     }
-
-    public void Add(bool positivo, int codice, string testo)
-    {
-        EsitoControllo oCtrl = new EsitoControllo();
-        oCtrl.Positivo = positivo;
-        oCtrl.EsitoCodice = codice;
-        oCtrl.EsitoTesto = testo;
-
-        this.Add(oCtrl);
-    }
-
 }

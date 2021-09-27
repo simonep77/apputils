@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using AppUtils.Lib.Controlli;
 
 namespace AppUtils.Lib.Codici
 {
@@ -44,6 +45,45 @@ namespace AppUtils.Lib.Codici
         #endregion Private Members
 
         #region Public Methods
+
+        /// <summary>
+        /// Dato un codice fiscale ritorna l'indicazione del SESSO
+        /// </summary>
+        /// <param name="cf"></param>
+        /// <returns></returns>
+        public static char DecodeSessoFromCF(string cf)
+        {
+            if (!ControlloFormaleOK(cf))
+                throw new ArgumentException("Codice fiscale");
+
+            if (Convert.ToInt32(cf.Substring(10, 2)) > 40)
+                return 'F';
+
+            return 'M';
+        }
+
+        /// <summary>
+        /// Dato un codice fiscale ritorna la data di nascita
+        /// </summary>
+        /// <param name="cf"></param>
+        /// <returns></returns>
+        public static DateTime DecodeDataNascitaFromCF(string cf)
+        {
+            if (!ControlloFormaleOK(cf))
+                throw new ArgumentException("Codice fiscale");
+
+            int iAnno = Convert.ToInt32(cf.Substring(6, 2));
+            int iMese = Months.IndexOf(cf.Substring(8, 1)) + 1;
+            int iGiorno = Convert.ToInt32(cf.Substring(9, 2));
+
+            if (iGiorno > 40)
+                iGiorno -= 40;
+
+            return new DateTime(iAnno, iMese, iGiorno);
+        }
+
+
+
         /// <summary>
         /// Costruisce un codice fiscale "formalmente corretto" sulla base dei parametri indicati.
         /// 
