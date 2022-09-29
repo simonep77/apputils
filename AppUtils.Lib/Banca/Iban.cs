@@ -330,7 +330,7 @@ namespace AppUtils.Lib.Banca
             _INFO_PAESE.Add("GL", new InfoIbanNazione("GL", "GROENLANDIA", "GL00BBBBCCCCCCCCCC"));
             _INFO_PAESE.Add("HU", new InfoIbanNazione("HU", "UNGHERIA", "HU00BBBBBBBCCCCCCCCCCCCCCCCC"));
             _INFO_PAESE.Add("IS", new InfoIbanNazione("IS", "ISLANDA", "IS00BBBBSSCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("IR", new InfoIbanNazione("IR", "IRLANDA", "IR00BBBBSSSSSSCCCCCCCC"));
+            _INFO_PAESE.Add("IE", new InfoIbanNazione("IE", "IRLANDA", "IE00BBBBSSSSSSCCCCCCCC"));
             _INFO_PAESE.Add("IL", new InfoIbanNazione("IL", "ISRAELE", "IL00BBBSSSCCCCCCCCCCCCC"));
             _INFO_PAESE.Add("IT", new InfoIbanNazione("IT", "ITALIA", "IT00KBBBBBSSSSSCCCCCCCCCCCC"));
             _INFO_PAESE.Add("LV", new InfoIbanNazione("LV", "LETTONIA", "LV00BBBBCCCCCCCCCCCCC"));
