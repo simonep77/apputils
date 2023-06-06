@@ -19,86 +19,30 @@ namespace AppUtils.Lib.Banca
 
     public class InfoIbanNazione
     {
-        private string mCodiceIsoNazione;
-        private string mDescNazione;
-        private string mIbanCodifica;
-        private int mCodiceBancaLength;
-        private int mCodiceSportelloLength;
-        private int mCodiceControlloLength;
-        private int mNumeroContoLength;
+
         private static Dictionary<string, string> _Nazioni;
 
-        public string CodiceIsoNazione
-        {
-            get
-            {
-                return this.mCodiceIsoNazione;
-            }
-        }
+        public string IbanCodifica { get; private set; }
+        public string CodiceValuta { get; private set; }
+        public bool IsAreaSepa { get; private set; }
 
-        public string DescNazione
-        {
-            get
-            {
-                return this.mDescNazione;
-            }
-        }
+        public string CodiceIsoNazione { get; private set; }
 
-        public int IbanLength
-        {
-            get
-            {
-                return this.mIbanCodifica.Length;
-            }
-        }
+        public string DescNazione { get; private set; }
 
-        public int CodiceControlloLength
-        {
-            get
-            {
-                return this.mCodiceControlloLength;
-            }
-        }
+        public int IbanLength => this.IbanCodifica.Length;
 
-        public int CodiceBancaLength
-        {
-            get
-            {
-                return this.mCodiceBancaLength;
-            }
-        }
+        public int CodiceControlloLength { get; private set; }
 
-        public int CodiceSportelloLength
-        {
-            get
-            {
-                return this.mCodiceSportelloLength;
-            }
-        }
+        public int CodiceBancaLength { get; private set; }
 
-        public int NumeroContoLength
-        {
-            get
-            {
-                return this.mNumeroContoLength;
-            }
-        }
+        public int CodiceSportelloLength { get; private set; }
 
-        public bool IsItaliano
-        {
-            get
-            {
-                return (this.mCodiceIsoNazione == "IT");
-            }
-        }
+        public int NumeroContoLength { get; private set; }
 
-        public bool IsStraniero
-        {
-            get
-            {
-                return (!this.IsItaliano);
-            }
-        }
+        public bool IsItaliano => this.CodiceIsoNazione == "IT";
+
+        public bool IsStraniero => !this.IsItaliano;
 
 
 
@@ -116,13 +60,15 @@ namespace AppUtils.Lib.Banca
         ///     ''' <param name="isoNazione"></param>
         ///     ''' <param name="descNazione"></param>
         ///     ''' <param name="codificaIban"></param>
-        public InfoIbanNazione(string isoNazione, string descNazione, string codificaIban)
+        public InfoIbanNazione(string isoNazione, string descNazione, string codificaIban, bool areaSepa, string codvaluta)
         {
-            this.mIbanCodifica = codificaIban.ToUpper().Trim().PadRight(4);
+            this.IbanCodifica = codificaIban.ToUpper().Trim().PadRight(4);
 
             // Imposta codice paese
-            this.mCodiceIsoNazione = isoNazione;
-            this.mDescNazione = descNazione;
+            this.CodiceIsoNazione = isoNazione;
+            this.DescNazione = descNazione;
+            this.IsAreaSepa = areaSepa;
+            this.CodiceValuta = codvaluta;
 
             // Esegue conteggio
             for (int index = 4; index <= codificaIban.Length - 1; index++)
@@ -131,25 +77,25 @@ namespace AppUtils.Lib.Banca
                 {
                     case 'B':
                         {
-                            this.mCodiceBancaLength += 1;
+                            this.CodiceBancaLength++;
                             break;
                         }
 
                     case 'S':
                         {
-                            this.mCodiceSportelloLength += 1;
+                            this.CodiceSportelloLength++;
                             break;
                         }
 
                     case 'K':
                         {
-                            this.mCodiceControlloLength += 1;
+                            this.CodiceControlloLength++;
                             break;
                         }
 
                     case 'C':
                         {
-                            this.mNumeroContoLength += 1;
+                            this.NumeroContoLength++;
                             break;
                         }
 
@@ -181,7 +127,7 @@ namespace AppUtils.Lib.Banca
             // Esegue decomposizione
             for (int index = 4; index <= iLenMaxIban - 1; index++)
             {
-                switch (this.mIbanCodifica[index])
+                switch (this.IbanCodifica[index])
                 {
                     case 'B':
                         {
@@ -216,7 +162,7 @@ namespace AppUtils.Lib.Banca
 
             // Imposta campi
             oIbanDec.IbanCompleto = iban;
-            oIbanDec.CodicePaese = this.mCodiceIsoNazione;
+            oIbanDec.CodicePaese = this.CodiceIsoNazione;
             oIbanDec.CheckDigit = iban.Substring(2, 2);
             oIbanDec.CodiceControllo = sbCodiceControllo.ToString();
             oIbanDec.CodiceBanca = sbBanca.ToString();
@@ -242,24 +188,24 @@ namespace AppUtils.Lib.Banca
         public IbanInfo RicomponiIban(string checkDigit, string codiceControllo, string codiceBanca, string codiceSportello, string numeroConto)
         {
             IbanInfo oIbanInfo = new IbanInfo();
-            System.Text.StringBuilder sbIban = new System.Text.StringBuilder(this.mCodiceIsoNazione, this.IbanLength);
+            System.Text.StringBuilder sbIban = new System.Text.StringBuilder(this.CodiceIsoNazione, this.IbanLength);
             char cCurrChar = ' ';
             int iCurrIndex = 0;
 
             // Imposta dati base
             checkDigit = checkDigit.PadRight(2);
-            codiceControllo = codiceControllo.PadRight(this.mCodiceControlloLength);
-            codiceBanca = codiceBanca.PadRight(this.mCodiceBancaLength);
-            codiceSportello = codiceSportello.PadRight(this.mCodiceSportelloLength);
-            numeroConto = numeroConto.PadRight(this.mNumeroContoLength);
+            codiceControllo = codiceControllo.PadRight(this.CodiceControlloLength);
+            codiceBanca = codiceBanca.PadRight(this.CodiceBancaLength);
+            codiceSportello = codiceSportello.PadRight(this.CodiceSportelloLength);
+            numeroConto = numeroConto.PadRight(this.NumeroContoLength);
 
             // Esegue decomposizione
-            for (int index = 2; index <= this.mIbanCodifica.Length - 1; index++)
+            for (int index = 2; index <= this.IbanCodifica.Length - 1; index++)
             {
-                if (cCurrChar != this.mIbanCodifica[index])
+                if (cCurrChar != this.IbanCodifica[index])
                 {
                     iCurrIndex = 0;
-                    cCurrChar = this.mIbanCodifica[index];
+                    cCurrChar = this.IbanCodifica[index];
                 }
 
                 switch (cCurrChar)
@@ -304,7 +250,7 @@ namespace AppUtils.Lib.Banca
                 iCurrIndex += 1;
             }
 
-            oIbanInfo.CodicePaese = this.mCodiceIsoNazione;
+            oIbanInfo.CodicePaese = this.CodiceIsoNazione;
             oIbanInfo.CheckDigit = checkDigit;
             oIbanInfo.CodiceControllo = codiceControllo;
             oIbanInfo.CodiceBanca = codiceBanca;

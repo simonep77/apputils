@@ -13,85 +13,27 @@ namespace AppUtils.Lib.Banca
     /// ''' <remarks></remarks>
     public class Iban
     {
-        private IbanInfo mIbanInfo;
-        private InfoIbanNazione mInfoIbanPaese;
+        public string IbanCompleto => this.InfoIban.IbanCompleto;
 
+        public string IbanPaperFormat => this.InfoIban.IbanPaperFormat;
 
-        public string IbanCompleto
-        {
-            get
-            {
-                return this.mIbanInfo.IbanCompleto;
-            }
-        }
+        public string IbanCodicePaese => this.InfoIban.CodicePaese;
 
-        public string IbanPaperFormat
-        {
-            get
-            {
-                return this.mIbanInfo.IbanPaperFormat;
-            }
-        }
+        public string IbanCheckDigit => this.InfoIban.CheckDigit;
 
-        public string IbanCodicePaese
-        {
-            get
-            {
-                return this.mIbanInfo.CodicePaese;
-            }
-        }
+        public string IbanCodiceControllo => this.InfoIban.CodiceControllo;
 
-        public string IbanCheckDigit
-        {
-            get
-            {
-                return this.mIbanInfo.CheckDigit;
-            }
-        }
+        public string IbanCodiceBanca => this.InfoIban.CodiceBanca;
 
-        public string IbanCodiceControllo
-        {
-            get
-            {
-                return this.mIbanInfo.CodiceControllo;
-            }
-        }
+        public string IbanCodiceSportello => this.InfoIban.CodiceSportello;
 
-        public string IbanCodiceBanca
-        {
-            get
-            {
-                return this.mIbanInfo.CodiceBanca;
-            }
-        }
-
-        public string IbanCodiceSportello
-        {
-            get
-            {
-                return this.mIbanInfo.CodiceSportello;
-            }
-        }
-
-        public string IbanNumeroConto
-        {
-            get
-            {
-                return this.mIbanInfo.NumeroConto;
-            }
-        }
+        public string IbanNumeroConto => this.InfoIban.NumeroConto;
 
         /// <summary>
         ///     ''' Indica se l'iban e' italiano
         ///     ''' </summary>
         ///     ''' <returns></returns>
-        public bool IsItaliano
-        {
-            get
-            {
-                return this.mInfoIbanPaese.IsItaliano;
-            }
-        }
+        public bool IsItaliano => this.InfoPaese.IsItaliano;
 
         /// <summary>
         ///     ''' Indica se l'iban fornito e' straniero
@@ -99,13 +41,7 @@ namespace AppUtils.Lib.Banca
         ///     ''' <value></value>
         ///     ''' <returns></returns>
         ///     ''' <remarks></remarks>
-        public bool IsStraniero
-        {
-            get
-            {
-                return this.mInfoIbanPaese.IsStraniero;
-            }
-        }
+        public bool IsStraniero => this.InfoPaese.IsStraniero;
 
         /// <summary>
         ///     ''' Indica se l'iban fornito e' della lunghezza prevista
@@ -113,25 +49,18 @@ namespace AppUtils.Lib.Banca
         ///     ''' <value></value>
         ///     ''' <returns></returns>
         ///     ''' <remarks></remarks>
-        public bool IsCompleto
-        {
-            get
-            {
-                return (this.mInfoIbanPaese.IbanLength == this.mIbanInfo.IbanCompleto.Length);
-            }
-        }
+        public bool IsCompleto => this.InfoPaese.IbanLength == this.IbanCompleto.Length;
 
         /// <summary>
         ///     ''' Informazioni relative al paese dell'iban
         ///     ''' </summary>
         ///     ''' <returns></returns>
-        public InfoIbanNazione InfoPaese
-        {
-            get
-            {
-                return this.mInfoIbanPaese;
-            }
-        }
+        public InfoIbanNazione InfoPaese { get; private set; }
+
+        /// <summary>
+        /// Informazioni dell'iban
+        /// </summary>
+        public IbanInfo InfoIban { get; private set; }
 
 
 
@@ -148,13 +77,14 @@ namespace AppUtils.Lib.Banca
             if (ibanCompleto.Length > 1)
             {
                 // Se ci sono almeno 2 caratteri prova a determinare la nazione
-                if (Iban._INFO_PAESE.TryGetValue(ibanCompleto.Substring(0, 2), out this.mInfoIbanPaese))
+                if (Iban._INFO_PAESE.TryGetValue(ibanCompleto.Substring(0, 2), out var infoPaese))
                 {
+                    this.InfoPaese = infoPaese;
                     // Normalizza a n caratteri
-                    ibanCompleto = ibanCompleto.PadRight(this.mInfoIbanPaese.IbanLength);
+                    ibanCompleto = ibanCompleto.PadRight(this.InfoPaese.IbanLength);
 
                     // Decompone iban in base alle regole del paese
-                    this.mIbanInfo = this.mInfoIbanPaese.DecomponiIban(ibanCompleto);
+                    this.InfoIban = this.InfoPaese.DecomponiIban(ibanCompleto);
                 }
                 else
                     // Sconosciuto
@@ -163,10 +93,10 @@ namespace AppUtils.Lib.Banca
             else
             {
                 // Ne imposta comunque uno vuoto
-                this.mIbanInfo = new IbanInfo();
+                this.InfoIban = new IbanInfo();
 
                 // Imposta Info paese su Italia
-                this.mInfoIbanPaese = _INFO_PAESE["IT"];
+                this.InfoPaese = _INFO_PAESE["IT"];
             }
         }
 
@@ -216,20 +146,20 @@ namespace AppUtils.Lib.Banca
         {
 
             // Controllo lunghezze
-            if (this.mInfoIbanPaese.IbanLength != this.mIbanInfo.IbanCompleto.Trim().Length)
-                throw new ArgumentException($"L'iban fornito '{this.mIbanInfo.IbanCompleto.Trim()}' ha lunghezza errata (attesa {this.mInfoIbanPaese.IbanLength})");
+            if (this.InfoPaese.IbanLength != this.IbanCompleto.Trim().Length)
+                throw new ArgumentException($"L'iban fornito '{this.IbanCompleto.Trim()}' ha lunghezza errata (attesa {this.InfoPaese.IbanLength})");
 
-            if (this.mInfoIbanPaese.CodiceControlloLength != this.IbanCodiceControllo.Trim().Length)
-                throw new ArgumentException($"Il codice di controllo '{this.IbanCodiceControllo.Trim()}' ha lunghezza errata (attesa {this.mInfoIbanPaese.CodiceControlloLength})");
+            if (this.InfoPaese.CodiceControlloLength != this.IbanCodiceControllo.Trim().Length)
+                throw new ArgumentException($"Il codice di controllo '{this.IbanCodiceControllo.Trim()}' ha lunghezza errata (attesa {this.InfoPaese.CodiceControlloLength})");
 
-            if (this.mInfoIbanPaese.CodiceBancaLength != this.IbanCodiceBanca.Trim().Length)
-                throw new ArgumentException($"Il codice banca (ABI) '{this.IbanCodiceBanca.Trim()}' ha lunghezza errata (attesa {this.mInfoIbanPaese.CodiceBancaLength})");
+            if (this.InfoPaese.CodiceBancaLength != this.IbanCodiceBanca.Trim().Length)
+                throw new ArgumentException($"Il codice banca (ABI) '{this.IbanCodiceBanca.Trim()}' ha lunghezza errata (attesa {this.InfoPaese.CodiceBancaLength})");
 
-            if (this.mInfoIbanPaese.CodiceSportelloLength != this.IbanCodiceSportello.Trim().Length)
-                throw new ArgumentException($"Il codice sportello (CAB) '{this.IbanCodiceSportello.Trim()}' ha lunghezza errata (attesa {this.mInfoIbanPaese.CodiceSportelloLength})");
+            if (this.InfoPaese.CodiceSportelloLength != this.IbanCodiceSportello.Trim().Length)
+                throw new ArgumentException($"Il codice sportello (CAB) '{this.IbanCodiceSportello.Trim()}' ha lunghezza errata (attesa {this.InfoPaese.CodiceSportelloLength})");
 
-            if (this.mInfoIbanPaese.NumeroContoLength != this.IbanNumeroConto.Trim().Length)
-                throw new ArgumentException($"Il numero conto '{this.IbanNumeroConto.Trim()}' ha lunghezza errata (attesa {this.mInfoIbanPaese.NumeroContoLength})");
+            if (this.InfoPaese.NumeroContoLength != this.IbanNumeroConto.Trim().Length)
+                throw new ArgumentException($"Il numero conto '{this.IbanNumeroConto.Trim()}' ha lunghezza errata (attesa {this.InfoPaese.NumeroContoLength})");
 
             // Se italia verifica CIN
             if (!this.IsStraniero)
@@ -240,7 +170,7 @@ namespace AppUtils.Lib.Banca
             }
 
             // Valida check digit
-            if (!this.CheckIbanCheckDigit(this.mIbanInfo.IbanCompleto))
+            if (!this.CheckIbanCheckDigit(this.InfoIban.IbanCompleto))
                 throw new ArgumentException($"Il check digit '{this.IbanCheckDigit}' non coincide con quello atteso");
         }
 
@@ -252,7 +182,7 @@ namespace AppUtils.Lib.Banca
         ///     ''' <remarks></remarks>
         public string GetIbanFilledWith(char c)
         {
-            return this.mIbanInfo.IbanCompleto.PadRight(this.mInfoIbanPaese.IbanLength, c);
+            return this.InfoIban.IbanCompleto.PadRight(this.InfoPaese.IbanLength, c);
         }
 
 
@@ -305,64 +235,64 @@ namespace AppUtils.Lib.Banca
 
             // === CARICA ===
 
-            _INFO_PAESE.Add("AL", new InfoIbanNazione("AL", "ALBANIA", "AL00BBBBBBBBCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("AD", new InfoIbanNazione("AD", "ANDORRA", "AD00BBBBSSSSCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("SA", new InfoIbanNazione("SA", "ARABIA SAUDITA", "SA00BBCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("AT", new InfoIbanNazione("AT", "AUSTRIA", "AT00BBBBBCCCCCCCCCCC"));
-            _INFO_PAESE.Add("AZ", new InfoIbanNazione("AZ", "AZERBAIGIAN", "AZ00BBBBCCCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("BH", new InfoIbanNazione("BH", "BAHREIN", "BH00BBBBCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("BE", new InfoIbanNazione("BE", "BELGIO", "BE00BBBCCCCCCCKK"));
-            _INFO_PAESE.Add("BA", new InfoIbanNazione("BA", "BOSNIA ERZEGOVINA", "BA00BBBSSSCCCCCCCoKK"));
-            _INFO_PAESE.Add("BG", new InfoIbanNazione("BG", "BULGARIA", "BG00BBBBSSSSCCCCCCCCCC"));
-            _INFO_PAESE.Add("CR", new InfoIbanNazione("CR", "COSTARICA", "CR00KBBBCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("HR", new InfoIbanNazione("HR", "CROAZIA", "HR00BBBBBBBCCCCCCCCCC"));
-            _INFO_PAESE.Add("CY", new InfoIbanNazione("CY", "CIPRO", "CY00BBBSSSSSCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("CZ", new InfoIbanNazione("CZ", "REPUBBLICA CECA", "CZ00BBBBSSSSSSCCCCCCCCCC"));
-            _INFO_PAESE.Add("DK", new InfoIbanNazione("DK", "DANIMARCA", "DK00BBBBCCCCCCCCCC"));
-            _INFO_PAESE.Add("EE", new InfoIbanNazione("EE", "ESTONIA", "EE00BBSSCCCCCCCCCCCK"));
-            _INFO_PAESE.Add("FO", new InfoIbanNazione("FO", "ISOLE FAROE", "FO00CCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("FI", new InfoIbanNazione("FI", "FINLANDIA", "FI00BBBBBBCCCCCCCK"));
-            _INFO_PAESE.Add("FR", new InfoIbanNazione("FR", "FRANCIA", "FR00BBBBBSSSSSCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("DE", new InfoIbanNazione("DE", "GERMANIA", "DE00BBBBBBBBCCCCCCCCCC"));
-            _INFO_PAESE.Add("GE", new InfoIbanNazione("GE", "GEORGIA", "GE00BBCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("GI", new InfoIbanNazione("GI", "GIBILTERRA", "GI00BBBBCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("GR", new InfoIbanNazione("GR", "GRECIA", "GR00BBBBBBBCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("GL", new InfoIbanNazione("GL", "GROENLANDIA", "GL00BBBBCCCCCCCCCC"));
-            _INFO_PAESE.Add("HU", new InfoIbanNazione("HU", "UNGHERIA", "HU00BBBBBBBCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("IS", new InfoIbanNazione("IS", "ISLANDA", "IS00BBBBSSCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("IE", new InfoIbanNazione("IE", "IRLANDA", "IE00BBBBSSSSSSCCCCCCCC"));
-            _INFO_PAESE.Add("IL", new InfoIbanNazione("IL", "ISRAELE", "IL00BBBSSSCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("IT", new InfoIbanNazione("IT", "ITALIA", "IT00KBBBBBSSSSSCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("LV", new InfoIbanNazione("LV", "LETTONIA", "LV00BBBBCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("LB", new InfoIbanNazione("LB", "LIBANO", "LB00BBBBCCCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("LI", new InfoIbanNazione("LI", "LIECHTENSTEIN", "LI00BBBBBCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("LT", new InfoIbanNazione("LT", "LITUANIA", "LT00BBBBBCCCCCCCCCCC"));
-            _INFO_PAESE.Add("LU", new InfoIbanNazione("LU", "LUSSEMBURGO", "LU00BBBCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("KZ", new InfoIbanNazione("KZ", "KAZAKISTAN", "KZ00BBBCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("KW", new InfoIbanNazione("KW", "KUWAIT", "KW00BBBBCCCCCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("XK", new InfoIbanNazione("XK", "KOSOVO", "XK00BBSSCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("MK", new InfoIbanNazione("MK", "MACEDONIA", "MK00BBBCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("MT", new InfoIbanNazione("MT", "MALTA", "MT00BBBBSSSSSCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("MR", new InfoIbanNazione("MR", "MAURITANIA", "MR00BBBBBSSSSSCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("MU", new InfoIbanNazione("MU", "MAURITIUS", "MU00BBBBBBSSCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("MD", new InfoIbanNazione("MD", "MOLDAVIA", "MD00BBCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("MC", new InfoIbanNazione("MC", "MONACO", "MC00BBBBBSSSSSCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("ME", new InfoIbanNazione("ME", "MONTENEGRO", "ME00BBBCCCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("NL", new InfoIbanNazione("NL", "OLANDA", "NL00BBBBCCCCCCCCCC"));
-            _INFO_PAESE.Add("NO", new InfoIbanNazione("NO", "NORVEGIA", "NO00BBBBCCCCCCK"));
-            _INFO_PAESE.Add("PL", new InfoIbanNazione("PL", "POLONIA", "PL00BBBSSSSKCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("PT", new InfoIbanNazione("PT", "PORTOGALLO", "PT00BBBBBBBBCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("DO", new InfoIbanNazione("DO", "REPUBBLICA DOMINICANA", "DO00BBBBCCCCCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("RO", new InfoIbanNazione("RO", "ROMANIA", "RO00BBBBCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("SM", new InfoIbanNazione("SM", "SAN MARINO", "SM00KBBBBBSSSSSCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("RS", new InfoIbanNazione("RS", "SERBIA", "RS00BBBCCCCCCCCCCCCCKK"));
-            _INFO_PAESE.Add("SK", new InfoIbanNazione("SK", "SLOVACCHIA", "SK00BBBBSSSSSSCCCCCCCCCC"));
-            _INFO_PAESE.Add("ES", new InfoIbanNazione("ES", "SPAGNA", "ES00BBBBSSSSKKCCCCCCCCCC"));
-            _INFO_PAESE.Add("SE", new InfoIbanNazione("SE", "SVEZIA", "SE00BBBBCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("CH", new InfoIbanNazione("CH", "SVIZZERA", "CH00BBBBBCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("TR", new InfoIbanNazione("TR", "TURCHIA", "TR00BBBBBKCCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("TN", new InfoIbanNazione("TN", "TUNISIA", "TN00BBBBBCCCCCCCCCCCCCCC"));
-            _INFO_PAESE.Add("GB", new InfoIbanNazione("GB", "REGNO UNITO", "GB00BBBBSSSSSSCCCCCCCC"));
+            _INFO_PAESE.Add("AL", new InfoIbanNazione("AL", "ALBANIA", "AL00BBBBBBBBCCCCCCCCCCCCCCCC", true, "ALL"));
+            _INFO_PAESE.Add("AD", new InfoIbanNazione("AD", "ANDORRA", "AD00BBBBSSSSCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("SA", new InfoIbanNazione("SA", "ARABIA SAUDITA", "SA00BBCCCCCCCCCCCCCCCCCC", false, "SAR"));
+            _INFO_PAESE.Add("AT", new InfoIbanNazione("AT", "AUSTRIA", "AT00BBBBBCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("AZ", new InfoIbanNazione("AZ", "AZERBAIGIAN", "AZ00BBBBCCCCCCCCCCCCCCCCCCCC", false, "AZN"));
+            _INFO_PAESE.Add("BH", new InfoIbanNazione("BH", "BAHREIN", "BH00BBBBCCCCCCCCCCCCCC", false, "BHD"));
+            _INFO_PAESE.Add("BE", new InfoIbanNazione("BE", "BELGIO", "BE00BBBCCCCCCCKK", true, "EUR"));
+            _INFO_PAESE.Add("BA", new InfoIbanNazione("BA", "BOSNIA ERZEGOVINA", "BA00BBBSSSCCCCCCCoKK", false, "BAM"));
+            _INFO_PAESE.Add("BG", new InfoIbanNazione("BG", "BULGARIA", "BG00BBBBSSSSCCCCCCCCCC",true, "BGN"));
+            _INFO_PAESE.Add("CR", new InfoIbanNazione("CR", "COSTARICA", "CR00KBBBCCCCCCCCCCCCCC", false, "CRC"));
+            _INFO_PAESE.Add("HR", new InfoIbanNazione("HR", "CROAZIA", "HR00BBBBBBBCCCCCCCCCC", true, "HRK"));
+            _INFO_PAESE.Add("CY", new InfoIbanNazione("CY", "CIPRO", "CY00BBBSSSSSCCCCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("CZ", new InfoIbanNazione("CZ", "REPUBBLICA CECA", "CZ00BBBBSSSSSSCCCCCCCCCC", true, "CZK"));
+            _INFO_PAESE.Add("DK", new InfoIbanNazione("DK", "DANIMARCA", "DK00BBBBCCCCCCCCCC", true, "DKK"));
+            _INFO_PAESE.Add("EE", new InfoIbanNazione("EE", "ESTONIA", "EE00BBSSCCCCCCCCCCCK", true, "EUR"));
+            _INFO_PAESE.Add("FO", new InfoIbanNazione("FO", "ISOLE FAROE", "FO00CCCCCCCCCCCCCC", false, "DKK"));
+            _INFO_PAESE.Add("FI", new InfoIbanNazione("FI", "FINLANDIA", "FI00BBBBBBCCCCCCCK", true, "EUR"));
+            _INFO_PAESE.Add("FR", new InfoIbanNazione("FR", "FRANCIA", "FR00BBBBBSSSSSCCCCCCCCCCCKK", true, "EUR"));
+            _INFO_PAESE.Add("DE", new InfoIbanNazione("DE", "GERMANIA", "DE00BBBBBBBBCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("GE", new InfoIbanNazione("GE", "GEORGIA", "GE00BBCCCCCCCCCCCCCCCC", false, "GEL"));
+            _INFO_PAESE.Add("GI", new InfoIbanNazione("GI", "GIBILTERRA", "GI00BBBBCCCCCCCCCCCCCCC", true, "GIP"));
+            _INFO_PAESE.Add("GR", new InfoIbanNazione("GR", "GRECIA", "GR00BBBBBBBCCCCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("GL", new InfoIbanNazione("GL", "GROENLANDIA", "GL00BBBBCCCCCCCCCC", false, "DKK"));
+            _INFO_PAESE.Add("HU", new InfoIbanNazione("HU", "UNGHERIA", "HU00BBBBBBBCCCCCCCCCCCCCCCCC", true, "HUF"));
+            _INFO_PAESE.Add("IS", new InfoIbanNazione("IS", "ISLANDA", "IS00BBBBSSCCCCCCCCCCCCCCCC", true, "ISK"));
+            _INFO_PAESE.Add("IE", new InfoIbanNazione("IE", "IRLANDA", "IE00BBBBSSSSSSCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("IL", new InfoIbanNazione("IL", "ISRAELE", "IL00BBBSSSCCCCCCCCCCCCC", false, "ILS"));
+            _INFO_PAESE.Add("IT", new InfoIbanNazione("IT", "ITALIA", "IT00KBBBBBSSSSSCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("LV", new InfoIbanNazione("LV", "LETTONIA", "LV00BBBBCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("LB", new InfoIbanNazione("LB", "LIBANO", "LB00BBBBCCCCCCCCCCCCCCCCCCCC", false, "LBP"));
+            _INFO_PAESE.Add("LI", new InfoIbanNazione("LI", "LIECHTENSTEIN", "LI00BBBBBCCCCCCCCCCCC", true, "CHF"));
+            _INFO_PAESE.Add("LT", new InfoIbanNazione("LT", "LITUANIA", "LT00BBBBBCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("LU", new InfoIbanNazione("LU", "LUSSEMBURGO", "LU00BBBCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("KZ", new InfoIbanNazione("KZ", "KAZAKISTAN", "KZ00BBBCCCCCCCCCCCCC", false, "KZT"));
+            _INFO_PAESE.Add("KW", new InfoIbanNazione("KW", "KUWAIT", "KW00BBBBCCCCCCCCCCCCCCCCCCCCCC", false, "KWD"));
+            _INFO_PAESE.Add("XK", new InfoIbanNazione("XK", "KOSOVO", "XK00BBSSCCCCCCCCCCKK", false, "EUR"));
+            _INFO_PAESE.Add("MK", new InfoIbanNazione("MK", "MACEDONIA", "MK00BBBCCCCCCCCCCKK", false, "MKD"));
+            _INFO_PAESE.Add("MT", new InfoIbanNazione("MT", "MALTA", "MT00BBBBSSSSSCCCCCCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("MR", new InfoIbanNazione("MR", "MAURITANIA", "MR00BBBBBSSSSSCCCCCCCCCCCKK", false, "MRO"));
+            _INFO_PAESE.Add("MU", new InfoIbanNazione("MU", "MAURITIUS", "MU00BBBBBBSSCCCCCCCCCCCCCCCCCC", false, "MUR"));
+            _INFO_PAESE.Add("MD", new InfoIbanNazione("MD", "MOLDAVIA", "MD00BBCCCCCCCCCCCCCCCCCC", false, "MDL"));
+            _INFO_PAESE.Add("MC", new InfoIbanNazione("MC", "MONACO", "MC00BBBBBSSSSSCCCCCCCCCCCKK", true, "EUR"));
+            _INFO_PAESE.Add("ME", new InfoIbanNazione("ME", "MONTENEGRO", "ME00BBBCCCCCCCCCCCCCKK", false, "EUR"));
+            _INFO_PAESE.Add("NL", new InfoIbanNazione("NL", "OLANDA", "NL00BBBBCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("NO", new InfoIbanNazione("NO", "NORVEGIA", "NO00BBBBCCCCCCK", true, "NOK"));
+            _INFO_PAESE.Add("PL", new InfoIbanNazione("PL", "POLONIA", "PL00BBBSSSSKCCCCCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("PT", new InfoIbanNazione("PT", "PORTOGALLO", "PT00BBBBBBBBCCCCCCCCCCCKK", true, "EUR"));
+            _INFO_PAESE.Add("DO", new InfoIbanNazione("DO", "REPUBBLICA DOMINICANA", "DO00BBBBCCCCCCCCCCCCCCCCCCCC", false, "DOP"));
+            _INFO_PAESE.Add("RO", new InfoIbanNazione("RO", "ROMANIA", "RO00BBBBCCCCCCCCCCCCCCCC", true, "RON"));
+            _INFO_PAESE.Add("SM", new InfoIbanNazione("SM", "SAN MARINO", "SM00KBBBBBSSSSSCCCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("RS", new InfoIbanNazione("RS", "SERBIA", "RS00BBBCCCCCCCCCCCCCKK", false, "RSD"));
+            _INFO_PAESE.Add("SK", new InfoIbanNazione("SK", "SLOVACCHIA", "SK00BBBBSSSSSSCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("ES", new InfoIbanNazione("ES", "SPAGNA", "ES00BBBBSSSSKKCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("SE", new InfoIbanNazione("SE", "SVEZIA", "SE00BBBBCCCCCCCCCCCCCCCC", true, "SEK"));
+            _INFO_PAESE.Add("CH", new InfoIbanNazione("CH", "SVIZZERA", "CH00BBBBBCCCCCCCCCCCC", true, "CHF"));
+            _INFO_PAESE.Add("TR", new InfoIbanNazione("TR", "TURCHIA", "TR00BBBBBKCCCCCCCCCCCCCCCC", false, "TRY"));
+            _INFO_PAESE.Add("TN", new InfoIbanNazione("TN", "TUNISIA", "TN00BBBBBCCCCCCCCCCCCCCC", false, "TND"));
+            _INFO_PAESE.Add("GB", new InfoIbanNazione("GB", "REGNO UNITO", "GB00BBBBSSSSSSCCCCCCCC", true, "GBP"));
         }
 
         /// <summary>
