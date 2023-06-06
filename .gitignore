@@ -9,3 +9,5 @@
 /AppUtils.Test/bin/Release/net6.0
 /AppUtils.Test/obj/Release/net6.0
 /AppUtils.Lib/bin
+/AppUtils.Test/bin/Debug/net6.0
+/AppUtils.Test/obj
