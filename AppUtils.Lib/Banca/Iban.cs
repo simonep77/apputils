@@ -287,6 +287,7 @@ namespace AppUtils.Lib.Banca
             _INFO_PAESE.Add("SM", new InfoIbanNazione("SM", "SAN MARINO", "SM00KBBBBBSSSSSCCCCCCCCCCCC", true, "EUR"));
             _INFO_PAESE.Add("RS", new InfoIbanNazione("RS", "SERBIA", "RS00BBBCCCCCCCCCCCCCKK", false, "RSD"));
             _INFO_PAESE.Add("SK", new InfoIbanNazione("SK", "SLOVACCHIA", "SK00BBBBSSSSSSCCCCCCCCCC", true, "EUR"));
+            _INFO_PAESE.Add("SK", new InfoIbanNazione("SI", "SLOVENIA", "SI00BBSSSCCCCCCCCKK", true, "EUR"));
             _INFO_PAESE.Add("ES", new InfoIbanNazione("ES", "SPAGNA", "ES00BBBBSSSSKKCCCCCCCCCC", true, "EUR"));
             _INFO_PAESE.Add("SE", new InfoIbanNazione("SE", "SVEZIA", "SE00BBBBCCCCCCCCCCCCCCCC", true, "SEK"));
             _INFO_PAESE.Add("CH", new InfoIbanNazione("CH", "SVIZZERA", "CH00BBBBBCCCCCCCCCCCC", true, "CHF"));
