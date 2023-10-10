@@ -1,3 +1,4 @@
+using AppUtils.Lib.Banca;
 using AppUtils.Lib.Tracciati;
 using System.Text;
 
@@ -7,6 +8,17 @@ namespace AppUtils.Test
     public class UnitTest1
     {
         private Encoding encoding;
+
+
+        [TestMethod]
+        public void TestIban()
+        {
+
+            var iban = new Iban("IT001234567890000000000000");
+            iban.ValidateFormalNoException();
+            Assert.ThrowsException<ArgumentException>(() => iban.ValidateFormal());
+        }
+
 
         [TestMethod]
         public void TestMethod1()
