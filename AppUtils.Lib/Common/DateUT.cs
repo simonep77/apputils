@@ -9,7 +9,7 @@ namespace AppUtils.Lib.Common
     /// <summary>
     /// Funzioni di utilita' sulle date
     /// </summary>
-    public class DateUT
+    public static class DateUT
     {
 
         private static DateTime[] _ArrFestivita = new DateTime[] { 

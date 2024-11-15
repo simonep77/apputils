@@ -249,6 +249,7 @@ namespace AppUtils.Lib.Banca
             _INFO_PAESE.Add("CY", new InfoIbanNazione("CY", "CIPRO", "CY00BBBSSSSSCCCCCCCCCCCCCCCC", true, "EUR"));
             _INFO_PAESE.Add("CZ", new InfoIbanNazione("CZ", "REPUBBLICA CECA", "CZ00BBBBSSSSSSCCCCCCCCCC", true, "CZK"));
             _INFO_PAESE.Add("DK", new InfoIbanNazione("DK", "DANIMARCA", "DK00BBBBCCCCCCCCCC", true, "DKK"));
+            _INFO_PAESE.Add("EE", new InfoIbanNazione("EA", "EMIRATI ARABI", "EA00BBBCCCCCCCCCCCCCCCC", true, "AED"));
             _INFO_PAESE.Add("EE", new InfoIbanNazione("EE", "ESTONIA", "EE00BBSSCCCCCCCCCCCK", true, "EUR"));
             _INFO_PAESE.Add("FO", new InfoIbanNazione("FO", "ISOLE FAROE", "FO00CCCCCCCCCCCCCC", false, "DKK"));
             _INFO_PAESE.Add("FI", new InfoIbanNazione("FI", "FINLANDIA", "FI00BBBBBBCCCCCCCK", true, "EUR"));
