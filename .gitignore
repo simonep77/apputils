@@ -11,3 +11,5 @@
 /AppUtils.Lib/bin
 /AppUtils.Test/bin/Debug/net6.0
 /AppUtils.Test/obj
+/AppUtils.Test.Console/obj
+/AppUtils.Test.Console/bin/Debug/net8.0
