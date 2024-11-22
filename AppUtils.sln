@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppUtils.Lib", "AppUtils.Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUtils.Test", "AppUtils.Test\AppUtils.Test.csproj", "{60474652-9014-484C-994A-014948C07CBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUtils.Test.Console", "AppUtils.Test.Console\AppUtils.Test.Console.csproj", "{5E452A01-21F9-48F6-A01E-42EB34F083FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{60474652-9014-484C-994A-014948C07CBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60474652-9014-484C-994A-014948C07CBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60474652-9014-484C-994A-014948C07CBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E452A01-21F9-48F6-A01E-42EB34F083FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E452A01-21F9-48F6-A01E-42EB34F083FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E452A01-21F9-48F6-A01E-42EB34F083FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E452A01-21F9-48F6-A01E-42EB34F083FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
