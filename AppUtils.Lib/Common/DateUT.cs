@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace AppUtils.Lib.Common
@@ -279,18 +280,7 @@ namespace AppUtils.Lib.Common
         /// </returns>
         public static DateTime MinData(params DateTime[] dates)
         {
-            var dtRet = DateTime.MaxValue;
-
-            if (dates == null || dates.Length == 0)
-                return DateTime.MinValue;
-
-            for (int i = 0; i < dates.Length -1 ; i++)
-            {
-                if (dates[i] < dtRet)
-                    dtRet = dates[i];
-            }
-
-            return dtRet;
+            return dates?.OrderBy(x => x).FirstOrDefault() ?? DateTime.MinValue;
         }
 
         /// <summary>
@@ -302,18 +292,7 @@ namespace AppUtils.Lib.Common
         /// </returns>
         public static DateTime MaxData(params DateTime[] dates)
         {
-            var dtRet = DateTime.MinValue;
-
-            if (dates == null || dates.Length == 0)
-                return DateTime.MinValue;
-
-            for (int i = 0; i < dates.Length - 1; i++)
-            {
-                if (dates[i] > dtRet)
-                    dtRet = dates[i];
-            }
-
-            return dtRet;
+            return dates?.OrderByDescending(x => x).FirstOrDefault() ?? DateTime.MinValue;
         }
 
 

@@ -1,4 +1,5 @@
 using AppUtils.Lib.Banca;
+using AppUtils.Lib.Common;
 using AppUtils.Lib.Tracciati;
 using System.Text;
 
@@ -39,6 +40,25 @@ namespace AppUtils.Test
             f.AggiungiCampo(60, 10, DateTime.Today.ToString("yyyyMMdd"), '0', false);
             f.ScriviRecord();
             f.Dispose();
+        }
+
+        [TestMethod]
+        public void TestMethodDates()
+        {
+
+            var d1 = new DateTime(2024, 1, 1);
+            var d2 = new DateTime(2024, 12, 31);
+            var mid = DateUT.MinData(d1, d2);
+            Assert.AreEqual(d1, mid);
+
+            var mad = DateUT.MaxData(d1, d2);
+            Assert.AreEqual(d2, mad);
+
+            Assert.AreEqual(DateUT.MinData(null), DateTime.MinValue);
+            Assert.AreEqual(DateUT.MinData(new DateTime[] {}), DateTime.MinValue);
+
+            Assert.AreEqual(DateUT.MaxData(null), DateTime.MinValue);
+            Assert.AreEqual(DateUT.MaxData(new DateTime[] { }), DateTime.MinValue);
         }
     }
 }
